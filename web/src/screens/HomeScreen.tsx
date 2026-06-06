@@ -8,6 +8,9 @@ import type { BookingType } from '../types'
 
 const BOOKING_TYPES: BookingType[] = ['KOMMEN', 'GEHEN', 'MOBILES_KOMMEN', 'MOBILES_GEHEN']
 
+const CHECKIN_TYPES = new Set<BookingType>(['KOMMEN', 'MOBILES_KOMMEN'])
+const CHECKOUT_TYPES = new Set<BookingType>(['GEHEN', 'MOBILES_GEHEN'])
+
 function formatTime(isoString: string): string {
   const d = new Date(isoString)
   const hh = d.getHours().toString().padStart(2, '0')
@@ -29,18 +32,42 @@ export default function HomeScreen() {
   const hasPending = state.pendingBooking !== null
   const today = useMemo(() => new Date(), [])
 
-  // Build last-booking-time map per type for today's bookings
+  const todayBookings = useMemo(
+    () =>
+      state.bookings
+        .filter((b) => isSameDay(b.timestamp, today) && b.status !== 'cancelled')
+        .sort((a, b) => new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime()),
+    [state.bookings, today]
+  )
+
+  // Last non-cancelled booking today determines which buttons are "next logical step"
+  const lastBookingType: BookingType | null = useMemo(() => {
+    if (todayBookings.length === 0) return null
+    return todayBookings[todayBookings.length - 1].type
+  }, [todayBookings])
+
+  // Currently checked in = last action was a check-in type
+  const isCheckedIn = lastBookingType !== null && CHECKIN_TYPES.has(lastBookingType)
+
+  // Build last-booking-time map per type
   const lastTimesMap = useMemo(() => {
     const map: Partial<Record<BookingType, string>> = {}
-    const todayBookings = state.bookings
-      .filter((b) => isSameDay(b.timestamp, today) && b.status !== 'cancelled')
-      .sort((a, b) => new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime())
-
     for (const b of todayBookings) {
       map[b.type] = formatTime(b.timestamp)
     }
     return map
-  }, [state.bookings, today])
+  }, [todayBookings])
+
+  // A button is "dimmed" when it's the logical opposite of the expected next step
+  function isDimmed(type: BookingType): boolean {
+    if (isCheckedIn) {
+      // After check-in → check-out buttons are recommended, check-in buttons are dimmed
+      return CHECKIN_TYPES.has(type)
+    } else {
+      // Not checked in → check-in buttons are recommended, check-out buttons are dimmed
+      return CHECKOUT_TYPES.has(type)
+    }
+  }
 
   return (
     <div
@@ -92,6 +119,7 @@ export default function HomeScreen() {
             type={type}
             onPress={() => makeBooking(type)}
             disabled={hasPending}
+            dimmed={isDimmed(type)}
             lastBookingTime={lastTimesMap[type]}
           />
         ))}
