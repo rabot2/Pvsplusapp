@@ -44,11 +44,17 @@ export default function HomeScreen() {
     [state.bookings, today]
   )
 
-  // Last non-cancelled booking today determines the expected next step
+  // Only CONFIRMED bookings drive sort order & dimming — pending bookings are ignored
+  // so buttons don't jump the moment the user taps one.
+  const confirmedBookings = useMemo(
+    () => todayBookings.filter((b) => b.status === 'sent'),
+    [todayBookings]
+  )
+
   const lastBookingType: BookingType | null = useMemo(() => {
-    if (todayBookings.length === 0) return null
-    return todayBookings[todayBookings.length - 1].type
-  }, [todayBookings])
+    if (confirmedBookings.length === 0) return null
+    return confirmedBookings[confirmedBookings.length - 1].type
+  }, [confirmedBookings])
 
   // Which single type is the recommended next action?
   // KOMMEN → GEHEN, MOBILES_KOMMEN → MOBILES_GEHEN, otherwise both check-ins
