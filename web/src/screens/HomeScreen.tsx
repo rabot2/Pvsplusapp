@@ -70,6 +70,16 @@ export default function HomeScreen() {
 
   const isDimmed = (type: BookingType) => !recommendedTypes.has(type)
 
+  // Active buttons first, dimmed buttons after — each group keeps its natural order
+  const sortedTypes = useMemo(
+    () => [...BOOKING_TYPES].sort((a, b) => {
+      const aActive = recommendedTypes.has(a) ? 0 : 1
+      const bActive = recommendedTypes.has(b) ? 0 : 1
+      return aActive - bActive
+    }),
+    [recommendedTypes]
+  )
+
   return (
     <div
       style={{
@@ -114,7 +124,7 @@ export default function HomeScreen() {
 
       {/* Booking buttons */}
       <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
-        {BOOKING_TYPES.map((type) => (
+        {sortedTypes.map((type) => (
           <BookingButton
             key={type}
             type={type}
