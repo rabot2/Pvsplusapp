@@ -96,36 +96,17 @@ export default function HomeScreen() {
         padding: '16px 16px 0',
       }}
     >
-      {/* Status card */}
-      <StatusCard />
-
-      {/* Section header */}
+      {/* Section header — Buchung erfassen (oben) */}
       <div
         style={{
-          marginTop: 20,
           marginBottom: 12,
           display: 'flex',
           alignItems: 'center',
           gap: 8,
         }}
       >
-        <div
-          style={{
-            width: 3,
-            height: 18,
-            backgroundColor: colors.primary,
-            borderRadius: 2,
-          }}
-        />
-        <span
-          style={{
-            fontSize: 13,
-            fontWeight: 700,
-            color: colors.primary,
-            textTransform: 'uppercase',
-            letterSpacing: 0.8,
-          }}
-        >
+        <div style={{ width: 3, height: 18, backgroundColor: colors.primary, borderRadius: 2 }} />
+        <span style={{ fontSize: 13, fontWeight: 700, color: colors.primary, textTransform: 'uppercase', letterSpacing: 0.8 }}>
           Buchung erfassen
         </span>
       </div>
@@ -150,6 +131,23 @@ export default function HomeScreen() {
           )
         })}
       </div>
+
+      {/* Status card — Tagesübersicht (unten) */}
+      <div
+        style={{
+          marginTop: 20,
+          marginBottom: 12,
+          display: 'flex',
+          alignItems: 'center',
+          gap: 8,
+        }}
+      >
+        <div style={{ width: 3, height: 18, backgroundColor: colors.primary, borderRadius: 2 }} />
+        <span style={{ fontSize: 13, fontWeight: 700, color: colors.primary, textTransform: 'uppercase', letterSpacing: 0.8 }}>
+          Heute
+        </span>
+      </div>
+      <StatusCard />
 
       <div style={{ height: 16 }} />
     </div>

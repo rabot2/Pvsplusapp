@@ -62,26 +62,14 @@ export default function StatusCard() {
             const cfg = bookingConfig[b.type]
             return (
               <div key={b.id} style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-                {/* Dot — gray with ✕ when failed */}
-                <div style={{
-                  width: 10, height: 10, borderRadius: '50%', flexShrink: 0,
-                  backgroundColor: b.status === 'failed' ? '#C62828' : cfg.color,
-                }} />
+                <div style={{ width: 10, height: 10, borderRadius: '50%', flexShrink: 0, backgroundColor: cfg.color }} />
                 <span style={{ fontSize: 13, fontWeight: 600, color: colors.text, minWidth: 40 }}>{formatTime(b.timestamp)}</span>
-                <span style={{ fontSize: 13, color: b.status === 'failed' ? '#9CA3AF' : cfg.color, fontWeight: 500, flex: 1 }}>
-                  {cfg.label}
-                </span>
+                <span style={{ fontSize: 13, color: cfg.color, fontWeight: 500, flex: 1 }}>{cfg.label}</span>
                 {b.status === 'pending' && (
-                  <span style={{ fontSize: 10, color: '#F59E0B', fontWeight: 600 }}>⏳</span>
+                  <span style={{ fontSize: 11, color: '#F59E0B' }}>⏳</span>
                 )}
                 {b.status === 'failed' && (
-                  <span style={{
-                    fontSize: 10, fontWeight: 700, color: '#C62828',
-                    backgroundColor: '#FFEBEE', borderRadius: 4,
-                    padding: '2px 5px', border: '1px solid #FFCDD2',
-                  }}>
-                    Fehler
-                  </span>
+                  <span style={{ fontSize: 13, color: '#C62828', opacity: 0.7 }} title="Übertragung fehlgeschlagen">⚠︎</span>
                 )}
               </div>
             )
