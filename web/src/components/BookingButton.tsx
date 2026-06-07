@@ -7,8 +7,6 @@ interface BookingButtonProps {
   onPress: () => void
   disabled: boolean
   dimmed?: boolean
-  lastBookingTime?: string
-  // When set, button is in countdown/undo mode
   pendingSeconds?: number
   totalSeconds?: number
   onCancel?: () => void
@@ -19,9 +17,8 @@ export default function BookingButton({
   onPress,
   disabled,
   dimmed = false,
-  lastBookingTime,
   pendingSeconds,
-  totalSeconds = 5,
+  totalSeconds = 4,
   onCancel,
 }: BookingButtonProps) {
   const [pressed, setPressed] = useState(false)
@@ -133,15 +130,10 @@ export default function BookingButton({
   }
 
   // ── Normal mode ────────────────────────────────────────────────────────
-  const subtitle = lastBookingTime
-    ? `Letzte: ${lastBookingTime} Uhr`
-    : 'Heute noch keine Buchung'
-
-  const effectiveBg          = disabled ? '#F3F4F6' : dimmed ? '#F9FAFB' : config.bgColor
-  const effectiveBorder      = disabled ? '#D1D5DB' : dimmed ? '#D1D5DB' : config.color
-  const effectiveIconBg      = disabled ? '#E5E7EB' : dimmed ? '#9CA3AF' : config.color
-  const effectiveLabelColor  = disabled ? '#9CA3AF' : dimmed ? '#9CA3AF' : config.color
-  const effectiveSubColor    = disabled || dimmed ? '#9CA3AF' : '#6B7280'
+  const effectiveBg         = disabled ? '#F3F4F6' : dimmed ? '#F9FAFB' : config.bgColor
+  const effectiveBorder     = disabled ? '#D1D5DB' : dimmed ? '#D1D5DB' : config.color
+  const effectiveIconBg     = disabled ? '#E5E7EB' : dimmed ? '#9CA3AF' : config.color
+  const effectiveLabelColor = disabled ? '#9CA3AF' : dimmed ? '#9CA3AF' : config.color
 
   return (
     <button
@@ -157,7 +149,7 @@ export default function BookingButton({
         display: 'flex',
         alignItems: 'center',
         width: '100%',
-        minHeight: dimmed ? 90 : 110,
+        minHeight: 72,
         backgroundColor: effectiveBg,
         border: `2px solid ${effectiveBorder}`,
         borderRadius: 16,
@@ -175,30 +167,22 @@ export default function BookingButton({
       }}
     >
       <div style={{
-        width: dimmed ? 42 : 52, height: dimmed ? 42 : 52,
+        width: 44, height: 44,
         borderRadius: '50%', backgroundColor: effectiveIconBg,
         display: 'flex', alignItems: 'center', justifyContent: 'center',
-        fontSize: dimmed ? 18 : 22, color: '#fff', flexShrink: 0, fontWeight: 700,
+        fontSize: 20, color: '#fff', flexShrink: 0, fontWeight: 700,
       }}>
         {config.icon}
       </div>
 
       <div style={{ flex: 1, minWidth: 0 }}>
-        <div style={{ fontSize: dimmed ? 15 : 17, fontWeight: 700, color: effectiveLabelColor, lineHeight: 1.2, marginBottom: 4 }}>
+        <div style={{ fontSize: 16, fontWeight: 700, color: effectiveLabelColor, lineHeight: 1.2 }}>
           {config.label}
         </div>
-        <div style={{ fontSize: 12, color: effectiveSubColor, fontWeight: 400 }}>
-          {subtitle}
-        </div>
-        {dimmed && !disabled && (
-          <div style={{ fontSize: 11, color: '#B45309', fontWeight: 500, marginTop: 3 }}>
-            ⚠ Reihenfolge beachten
-          </div>
-        )}
       </div>
 
       <div style={{ fontSize: 20, color: disabled ? '#D1D5DB' : dimmed ? '#D1D5DB' : config.color, flexShrink: 0 }}>
-        {disabled ? '🔒' : dimmed ? '!' : '›'}
+        {disabled ? '🔒' : '›'}
       </div>
     </button>
   )

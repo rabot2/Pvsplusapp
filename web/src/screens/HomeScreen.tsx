@@ -13,13 +13,6 @@ const NEXT_EXPECTED: Partial<Record<BookingType, BookingType>> = {
   MOBILES_KOMMEN: 'MOBILES_GEHEN',
 }
 
-function formatTime(isoString: string): string {
-  const d = new Date(isoString)
-  const hh = d.getHours().toString().padStart(2, '0')
-  const mm = d.getMinutes().toString().padStart(2, '0')
-  return `${hh}:${mm}`
-}
-
 function isSameDay(isoString: string, date: Date): boolean {
   const d = new Date(isoString)
   return (
@@ -65,15 +58,6 @@ export default function HomeScreen() {
     // No booking yet, or last was a check-out → both check-ins are recommended
     return new Set<BookingType>(['KOMMEN', 'MOBILES_KOMMEN'])
   }, [lastBookingType])
-
-  // Build last-booking-time map per type
-  const lastTimesMap = useMemo(() => {
-    const map: Partial<Record<BookingType, string>> = {}
-    for (const b of todayBookings) {
-      map[b.type] = formatTime(b.timestamp)
-    }
-    return map
-  }, [todayBookings])
 
   const isDimmed = (type: BookingType) => !recommendedTypes.has(type)
 
@@ -122,7 +106,6 @@ export default function HomeScreen() {
               // Pending button stays active (for cancel); others are disabled
               disabled={hasPending && !isThisPending}
               dimmed={!isThisPending && isDimmed(type)}
-              lastBookingTime={lastTimesMap[type]}
               pendingSeconds={isThisPending ? (pending?.remainingSeconds ?? undefined) : undefined}
               totalSeconds={4}
               onCancel={undoPendingBooking}
