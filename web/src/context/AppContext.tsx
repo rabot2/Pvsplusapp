@@ -157,7 +157,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
 
     const pending: PendingBooking = {
       booking,
-      remainingSeconds: 15,
+      remainingSeconds: 10,
       scheduledAt: Date.now(),
     }
 
@@ -167,7 +167,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
 
     // Start countdown interval
     clearCountdownTimer()
-    let remaining = 15
+    let remaining = 10
 
     intervalRef.current = setInterval(() => {
       remaining -= 1
