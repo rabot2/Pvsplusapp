@@ -2,7 +2,6 @@ import { useMemo } from 'react'
 import { useApp } from '../context/AppContext'
 import BookingButton from '../components/BookingButton'
 import StatusCard from '../components/StatusCard'
-import UndoBanner from '../components/UndoBanner'
 import { colors } from '../theme'
 import type { BookingType } from '../types'
 
@@ -31,8 +30,10 @@ function isSameDay(isoString: string, date: Date): boolean {
 }
 
 export default function HomeScreen() {
-  const { state, makeBooking } = useApp()
-  const hasPending = state.pendingBooking !== null
+  const { state, makeBooking, undoPendingBooking } = useApp()
+  const pending = state.pendingBooking
+  const hasPending = pending !== null
+  const pendingType = pending?.booking.type ?? null
   const today = useMemo(() => new Date(), [])
 
   const todayBookings = useMemo(
@@ -124,23 +125,26 @@ export default function HomeScreen() {
 
       {/* Booking buttons */}
       <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
-        {sortedTypes.map((type) => (
-          <BookingButton
-            key={type}
-            type={type}
-            onPress={() => makeBooking(type)}
-            disabled={hasPending}
-            dimmed={isDimmed(type)}
-            lastBookingTime={lastTimesMap[type]}
-          />
-        ))}
+        {sortedTypes.map((type) => {
+          const isThisPending = type === pendingType
+          return (
+            <BookingButton
+              key={type}
+              type={type}
+              onPress={() => makeBooking(type)}
+              // Pending button stays active (for cancel); others are disabled
+              disabled={hasPending && !isThisPending}
+              dimmed={!isThisPending && isDimmed(type)}
+              lastBookingTime={lastTimesMap[type]}
+              pendingSeconds={isThisPending ? (pending?.remainingSeconds ?? undefined) : undefined}
+              totalSeconds={5}
+              onCancel={undoPendingBooking}
+            />
+          )
+        })}
       </div>
 
-      {/* Bottom padding so content doesn't hide behind UndoBanner */}
       <div style={{ height: 16 }} />
-
-      {/* Undo banner overlay */}
-      <UndoBanner />
     </div>
   )
 }
