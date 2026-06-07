@@ -1,4 +1,3 @@
-import { KernContextProvider } from '@kern-ux-annex/kern-react-kit'
 import { AppProvider, useApp } from './context/AppContext'
 import Header from './components/Header'
 import HomeScreen from './screens/HomeScreen'
@@ -169,10 +168,6 @@ export default function App() {
           min-height: 100vh;
           overflow-x: hidden;
         }
-        /* Prevent KERN font-family override on non-KERN elements */
-        *:not(i):not([class*="kern"]) {
-          font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-        }
         input, button, select, textarea {
           font-family: inherit;
         }
@@ -188,11 +183,9 @@ export default function App() {
           background: transparent;
         }
       `}</style>
-      <KernContextProvider>
-        <AppProvider>
-          <AppShell />
-        </AppProvider>
-      </KernContextProvider>
+      <AppProvider>
+        <AppShell />
+      </AppProvider>
     </>
   )
 }
