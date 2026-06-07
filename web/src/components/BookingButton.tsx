@@ -149,7 +149,7 @@ export default function BookingButton({
         display: 'flex',
         alignItems: 'center',
         width: '100%',
-        minHeight: 72,
+        minHeight: 110,
         backgroundColor: effectiveBg,
         border: `2px solid ${effectiveBorder}`,
         borderRadius: 16,
@@ -167,16 +167,16 @@ export default function BookingButton({
       }}
     >
       <div style={{
-        width: 44, height: 44,
+        width: 52, height: 52,
         borderRadius: '50%', backgroundColor: effectiveIconBg,
         display: 'flex', alignItems: 'center', justifyContent: 'center',
-        fontSize: 20, color: '#fff', flexShrink: 0, fontWeight: 700,
+        fontSize: 22, color: '#fff', flexShrink: 0, fontWeight: 700,
       }}>
         {config.icon}
       </div>
 
       <div style={{ flex: 1, minWidth: 0 }}>
-        <div style={{ fontSize: 16, fontWeight: 700, color: effectiveLabelColor, lineHeight: 1.2 }}>
+        <div style={{ fontSize: 17, fontWeight: 700, color: effectiveLabelColor, lineHeight: 1.2 }}>
           {config.label}
         </div>
       </div>
