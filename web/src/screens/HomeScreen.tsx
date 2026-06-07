@@ -44,17 +44,18 @@ export default function HomeScreen() {
     [state.bookings, today]
   )
 
-  // Only CONFIRMED bookings drive sort order & dimming — pending bookings are ignored
-  // so buttons don't jump the moment the user taps one.
-  const confirmedBookings = useMemo(
-    () => todayBookings.filter((b) => b.status === 'sent'),
+  // Bookings that have left the countdown (sent OR failed) drive sort order & dimming.
+  // 'pending' is excluded so buttons don't jump mid-countdown.
+  // 'failed' is included so the user's intent still affects ordering.
+  const submittedBookings = useMemo(
+    () => todayBookings.filter((b) => b.status === 'sent' || b.status === 'failed'),
     [todayBookings]
   )
 
   const lastBookingType: BookingType | null = useMemo(() => {
-    if (confirmedBookings.length === 0) return null
-    return confirmedBookings[confirmedBookings.length - 1].type
-  }, [confirmedBookings])
+    if (submittedBookings.length === 0) return null
+    return submittedBookings[submittedBookings.length - 1].type
+  }, [submittedBookings])
 
   // Which single type is the recommended next action?
   // KOMMEN → GEHEN, MOBILES_KOMMEN → MOBILES_GEHEN, otherwise both check-ins
