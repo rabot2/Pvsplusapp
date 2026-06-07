@@ -40,7 +40,7 @@ export default function StatusCard() {
   )
 
   const status = getStatus(todayBookings)
-  const recent = todayBookings.slice(-3)
+  const recent = todayBookings
 
   return (
     <div style={{ backgroundColor: colors.surface, borderRadius: 16, padding: 16, boxShadow: '0 2px 12px rgba(0,59,111,0.08)', border: `1px solid ${colors.border}`, marginBottom: 4 }}>
@@ -69,7 +69,7 @@ export default function StatusCard() {
                   <span style={{ fontSize: 11, color: '#F59E0B' }}>⏳</span>
                 )}
                 {b.status === 'failed' && (
-                  <span style={{ fontSize: 13, color: '#C62828', opacity: 0.7 }} title="Übertragung fehlgeschlagen">⚠︎</span>
+                  <span style={{ fontSize: 11, color: '#C62828', opacity: 0.8, fontWeight: 500, whiteSpace: 'nowrap' }}>⚠ Fehler</span>
                 )}
               </div>
             )

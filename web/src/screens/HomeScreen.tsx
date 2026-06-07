@@ -44,18 +44,17 @@ export default function HomeScreen() {
     [state.bookings, today]
   )
 
-  // Bookings that have left the countdown (sent OR failed) drive sort order & dimming.
-  // 'pending' is excluded so buttons don't jump mid-countdown.
-  // 'failed' is included so the user's intent still affects ordering.
-  const submittedBookings = useMemo(
-    () => todayBookings.filter((b) => b.status === 'sent' || b.status === 'failed'),
+  // Only successfully sent bookings drive sort order — failed bookings are ignored
+  // so a failed Gehen causes Gehen to be recommended again.
+  const sentBookings = useMemo(
+    () => todayBookings.filter((b) => b.status === 'sent'),
     [todayBookings]
   )
 
   const lastBookingType: BookingType | null = useMemo(() => {
-    if (submittedBookings.length === 0) return null
-    return submittedBookings[submittedBookings.length - 1].type
-  }, [submittedBookings])
+    if (sentBookings.length === 0) return null
+    return sentBookings[sentBookings.length - 1].type
+  }, [sentBookings])
 
   // Which single type is the recommended next action?
   // KOMMEN → GEHEN, MOBILES_KOMMEN → MOBILES_GEHEN, otherwise both check-ins
