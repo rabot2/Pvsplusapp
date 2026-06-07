@@ -1,7 +1,9 @@
 import { useMemo } from 'react'
+import { KernBadge } from '@kern-ux-annex/kern-react-kit'
 import { useApp } from '../context/AppContext'
 import { bookingConfig, colors } from '../theme'
 import type { Booking } from '../types'
+import type { KernStatus } from '@kern-ux-annex/kern-react-kit/types'
 
 function formatTime(isoString: string): string {
   const d = new Date(isoString)
@@ -31,21 +33,19 @@ function isSameDay(isoString: string, date: Date): boolean {
 
 function getStatusInfo(todayBookings: Booking[]): {
   label: string
-  color: string
-  bgColor: string
-  dot: string
+  variant: KernStatus
 } {
   if (todayBookings.length === 0) {
-    return { label: 'Noch nicht gebucht', color: '#6B7280', bgColor: '#F3F4F6', dot: '○' }
+    return { label: 'Noch nicht gebucht', variant: 'warning' }
   }
   const last = todayBookings[todayBookings.length - 1]
   if (last.type === 'KOMMEN') {
-    return { label: 'Anwesend', color: '#1B5E20', bgColor: '#E8F5E9', dot: '●' }
+    return { label: 'Anwesend', variant: 'success' }
   }
   if (last.type === 'MOBILES_KOMMEN') {
-    return { label: 'Mobil', color: '#1565C0', bgColor: '#E3F2FD', dot: '●' }
+    return { label: 'Mobil', variant: 'info' }
   }
-  return { label: 'Abwesend', color: '#6B7280', bgColor: '#F3F4F6', dot: '○' }
+  return { label: 'Abwesend', variant: 'warning' }
 }
 
 export default function StatusCard() {
@@ -108,24 +108,8 @@ export default function StatusCard() {
           </div>
         </div>
 
-        {/* Status pill */}
-        <div
-          style={{
-            backgroundColor: status.bgColor,
-            color: status.color,
-            borderRadius: 20,
-            padding: '5px 12px',
-            fontSize: 13,
-            fontWeight: 700,
-            border: `1.5px solid ${status.color}33`,
-            display: 'flex',
-            alignItems: 'center',
-            gap: 5,
-          }}
-        >
-          <span style={{ fontSize: 8 }}>{status.dot}</span>
-          {status.label}
-        </div>
+        {/* Status badge — KERN UX component */}
+        <KernBadge label={status.label} variant={status.variant} withIcon />
       </div>
 
       {/* Divider */}
