@@ -96,6 +96,7 @@ const AppContext = createContext<AppContextValue | null>(null)
 export function AppProvider({ children }: { children: React.ReactNode }) {
   const [state, dispatch] = useReducer(appReducer, initialState)
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null)
+  const submitTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null)
   const pendingBookingRef = useRef<PendingBooking | null>(null)
   const settingsRef = useRef<UserSettings>(defaultSettings)
 
@@ -124,6 +125,10 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     if (intervalRef.current !== null) {
       clearInterval(intervalRef.current)
       intervalRef.current = null
+    }
+    if (submitTimeoutRef.current !== null) {
+      clearTimeout(submitTimeoutRef.current)
+      submitTimeoutRef.current = null
     }
   }, [])
 
@@ -174,9 +179,13 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
       dispatch({ type: 'TICK_PENDING' })
 
       if (remaining <= 0) {
-        clearCountdownTimer()
-        // Submit — use the captured booking (not from ref to avoid stale closure)
-        void submitBookingNow(booking)
+        // Stop ticking; wait 1 s so the final animation (ring drains to 0) completes
+        clearInterval(intervalRef.current!)
+        intervalRef.current = null
+        submitTimeoutRef.current = setTimeout(() => {
+          submitTimeoutRef.current = null
+          void submitBookingNow(booking)
+        }, 1000)
       }
     }, 1000)
   }, [clearCountdownTimer, submitBookingNow])
