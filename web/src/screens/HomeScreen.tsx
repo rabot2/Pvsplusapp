@@ -8,8 +8,11 @@ import type { BookingType } from '../types'
 
 const BOOKING_TYPES: BookingType[] = ['KOMMEN', 'GEHEN', 'MOBILES_KOMMEN', 'MOBILES_GEHEN']
 
-const CHECKIN_TYPES = new Set<BookingType>(['KOMMEN', 'MOBILES_KOMMEN'])
-const CHECKOUT_TYPES = new Set<BookingType>(['GEHEN', 'MOBILES_GEHEN'])
+// Strict pairing: each check-in type has exactly one expected follow-up
+const NEXT_EXPECTED: Partial<Record<BookingType, BookingType>> = {
+  KOMMEN:         'GEHEN',
+  MOBILES_KOMMEN: 'MOBILES_GEHEN',
+}
 
 function formatTime(isoString: string): string {
   const d = new Date(isoString)
@@ -40,14 +43,21 @@ export default function HomeScreen() {
     [state.bookings, today]
   )
 
-  // Last non-cancelled booking today determines which buttons are "next logical step"
+  // Last non-cancelled booking today determines the expected next step
   const lastBookingType: BookingType | null = useMemo(() => {
     if (todayBookings.length === 0) return null
     return todayBookings[todayBookings.length - 1].type
   }, [todayBookings])
 
-  // Currently checked in = last action was a check-in type
-  const isCheckedIn = lastBookingType !== null && CHECKIN_TYPES.has(lastBookingType)
+  // Which single type is the recommended next action?
+  // KOMMEN → GEHEN, MOBILES_KOMMEN → MOBILES_GEHEN, otherwise both check-ins
+  const recommendedTypes = useMemo((): Set<BookingType> => {
+    if (lastBookingType && NEXT_EXPECTED[lastBookingType]) {
+      return new Set([NEXT_EXPECTED[lastBookingType]!])
+    }
+    // No booking yet, or last was a check-out → both check-ins are recommended
+    return new Set<BookingType>(['KOMMEN', 'MOBILES_KOMMEN'])
+  }, [lastBookingType])
 
   // Build last-booking-time map per type
   const lastTimesMap = useMemo(() => {
@@ -58,16 +68,7 @@ export default function HomeScreen() {
     return map
   }, [todayBookings])
 
-  // A button is "dimmed" when it's the logical opposite of the expected next step
-  function isDimmed(type: BookingType): boolean {
-    if (isCheckedIn) {
-      // After check-in → check-out buttons are recommended, check-in buttons are dimmed
-      return CHECKIN_TYPES.has(type)
-    } else {
-      // Not checked in → check-in buttons are recommended, check-out buttons are dimmed
-      return CHECKOUT_TYPES.has(type)
-    }
-  }
+  const isDimmed = (type: BookingType) => !recommendedTypes.has(type)
 
   return (
     <div
