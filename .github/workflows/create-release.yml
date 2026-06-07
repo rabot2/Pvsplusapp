@@ -1,0 +1,41 @@
+name: Create v0.1 Release
+on:
+  workflow_dispatch:
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          ref: claude/iphone-time-tracking-app-8sWQ7
+      - name: Create tag and release
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git tag -f v0.1 HEAD
+          git push origin v0.1 --force
+          gh release delete v0.1 --yes 2>/dev/null || true
+          gh release create v0.1 \
+            --title "v0.1 – PVS+ Zeiterfassungs-App" \
+            --target claude/iphone-time-tracking-app-8sWQ7 \
+            --notes "## PVS+ Zeiterfassung v0.1
+
+Erste offizielle Version der iPhone-optimierten Zeiterfassungs-App im Bundesdesign (Bundesregierung).
+
+### Features
+- Buchungstypen: Kommen, Gehen, Mobiles Kommen, Mobiles Gehen
+- Corporate Design der Bundesregierung (Bundesblau \`#003B6F\`)
+- 5-Sekunden-Countdown mit Undo-Button direkt im Button
+- Intelligente Reihenfolge: KOMMEN → GEHEN, MOBILES_KOMMEN → MOBILES_GEHEN
+- Fehlgeschlagene Buchungen zählen nicht für Sortierung (werden erneut empfohlen)
+- Tagesübersicht mit allen heutigen Buchungen und Fehleranzeige
+- Konfigurierbare API-URL, Benutzername und Passwort
+- Datenpersistenz via localStorage
+
+**Live-App:** https://rabot2.github.io/Pvsplusapp/
+**Eingefrorene v0.1-Seite:** https://rabot2.github.io/Pvsplusapp/v0.1/"
