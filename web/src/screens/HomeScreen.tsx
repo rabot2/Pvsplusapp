@@ -124,7 +124,7 @@ export default function HomeScreen() {
               dimmed={!isThisPending && isDimmed(type)}
               lastBookingTime={lastTimesMap[type]}
               pendingSeconds={isThisPending ? (pending?.remainingSeconds ?? undefined) : undefined}
-              totalSeconds={5}
+              totalSeconds={4}
               onCancel={undoPendingBooking}
             />
           )
